@@ -1,0 +1,24 @@
+body{
+    background-color: rgb(238, 189, 129);
+}
+#arrowId{
+    position: absolute;
+    width: 200px;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-name:downAnmia;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+
+}
+
+@keyframes downAnmia {
+    0% { top:  -100%;
+
+    }
+    100% {
+        top:  100%;
+    }
+    
+}

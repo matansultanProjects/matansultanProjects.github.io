@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>setInterval </title>
+</head>
+<body>
+    <h1 id="hello"></h1>
+
+    <script>
+        let count = 1 //  הקצאנו משתנה לספירה .
+     
+        function sayHello(){    // יצרנו פונקציה שתרשום את ההודעה ותגיד שלום כל שניה 
+            let hello = document.getElementById("hello") //השטלנו על תגית H1 
+            hello.innerHTML = "hello to my website this is the :" + count + " times you joined" // הכנסנו את הטקסט לתוך התגית H1 
+            count = count + 1 // העלאנו את הספירה ב1 אחרי שהצגנו את ההודעה 
+        }
+
+
+        
+       setInterval(sayHello,1000) // קראנו לפונקציה תגיד שלום כל שניה 
+
+    </script>
+    
+</body>
+</html>
