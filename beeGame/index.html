@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>game</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <h1 id="scoreId">score: </h1>
+    <img src="player.png" alt="" id="player">
+    <img src="enemy.png" alt="" id="enemy">
+    <div id="floor"></div>
+<script>
+    addEventListener('keydown',checkKey)
+    let player = document.getElementById("player")
+    let enemy = document.getElementById("enemy")
+    let scoreId = document.getElementById("scoreId")
+    let score = 0 ;
+    let isJumping = false;  
+    let cheackInterval = setInterval(cheack,100)   // fix name 
+function checkKey(event){
+    if (event.key === ' '){
+        jump()
+    }
+}
+function jump(){
+    if(isJumping){
+        return // תצא מהופנקציה ולא תבצע קפיצה 
+    }
+    isJumping = true
+    player.classList.add('jump');
+    setTimeout(removeAnimation, 1000)     
+    let soundJump = new Audio('jump.wav') // מוסיפים צליל של קפיצה 
+    soundJump.play()
+}
+function removeAnimation(){
+    player.classList.remove('jump')
+    isJumping = false;
+    score++
+    scoreId.innerHTML = "score :  " + score
+}
+/* this leeson  */
+function cheack(){
+    if (elementsOverlap(player, enemy)) {
+        clearInterval(cheackInterval) // stop checking for collision 
+        // fix name 
+        let best = localStorage.getItem('best')
+        // if first game (no record is saved) or if the user has beaten his record:
+        if (!best || best < score) {
+            localStorage.setItem('best', score)
+            best = score
+        }
+
+        document.body.innerHTML = `
+                <p id="overId"> Game Over! </p>  
+                <p id="result"> Your score is ${score}  </p> 
+                <p id="best"> Your best score is... ${best}  </p> 
+        `
+        let overSound = new Audio('gameover.wav') // fix name
+        overSound.play()
+    }
+}
+
+function elementsOverlap(el1, el2) {
+    const domRect1 = el1.getBoundingClientRect()
+    const domRect2 = el2.getBoundingClientRect()
+
+    return !(
+        domRect1.top > domRect2.bottom ||
+        domRect1.right < domRect2.left ||
+        domRect1.bottom < domRect2.top ||
+        domRect1.left > domRect2.right
+    )
+}
+
+
+</script>
+    
+</body>
+</html>
