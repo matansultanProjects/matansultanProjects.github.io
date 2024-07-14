@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>המרת טלפונים לקובץ VCF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body dir="rtl">
+    <div class="container">
+        <h1 class="animate__animated animate__bounceInDown">המרת טלפונים לקובץ VCF</h1>
+        <form id="convertForm" onsubmit="event.preventDefault(); convertToVCF();" class="animate__animated animate__fadeIn">
+            <label for="sheetUrl">קישור לגיליון גוגל:</label>
+            <input type="text" id="sheetUrl" placeholder="הכנס קישור לגיליון" required>
+            <br>
+            <label for="classNumber">מספר כיתה:</label>
+            <input type="text" id="classNumber" placeholder="הכנס מספר כיתה" required>
+            <br>
+            <button type="submit" class="btn-convert animate__animated animate__fadeInUp">המר</button>
+        </form>
+        <div id="loadingSpinner" class="spinner" style="display:none;"></div>
+        <a id="downloadLink" style="display:none">הורד קובץ VCF</a>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
