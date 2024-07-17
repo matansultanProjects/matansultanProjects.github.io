@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    
+    <h1 id="scoreId">score: 0</h1>
+    <img src="https://1000logos.net/wp-content/uploads/2020/09/SpongeBob-SquarePants-Logo-1999.png" alt="" id="logo">
+    <img src="player.png" alt="" id="player">
+    <img src="enmey.png" alt="" id="enmey">
+    
+    <script>
+
+addEventListener('keydown', checkKey)
+let player = document.getElementById("player")
+let enmey = document.getElementById("enmey")
+let scoreId = document.getElementById("scoreId")
+let score = 0;
+let isJumping = false
+let cheackInterval = setInterval(check,100)
+let gameOverSound = new Audio("gameOver.wav")
+// localStorage.setItem("best","0")
+function checkKey(info) {
+    if(info.key === ' '){
+        jump()
+    }
+}
+function jump(){
+    if (isJumping){
+        return
+    }
+    isJumping =true
+    player.classList.add('jump')
+    setTimeout(removeAnmation,1000)
+    let soundJump = new Audio("jump.wav")
+soundJump.play()
+}
+function removeAnmation (){
+    player.classList.remove('jump')
+    isJumping = false;
+    score = score + 1
+    scoreId.innerHTML = " score : "+ score
+
+}
+// בניית הפונקציה שברגע שהשחקן פוגע באויב נגמר המשחק 
+function check(){
+    // ליצור את פונקציית ההתנגשות במידה ו2 אלמנטים נפגשים יסתיים המשחק .
+    if(elementsOverlap(player,enmey)){
+        clearInterval(cheackInterval)
+gameOverSound.play()
+        gameOverSound.play()
+        let best = localStorage.getItem("best")
+        if(!best || best < score){
+        localStorage.setItem('best',score)
+        best = score
+        
+        }
+              document.body.innerHTML = `
+        <p id="GameOverId"> Game over ! </p>
+        <p id="result">  your score is : ${score} ! </p> 
+        <p id="best"> your best score is : ${best} </p> 
+        
+        ` 
+    }
+   
+function elementsOverlap(el1, el2) {
+    const domRect1 = el1.getBoundingClientRect() // מקבל את הגבולות של האלמנט הראשון
+    const domRect2 = el2.getBoundingClientRect() // מקבל את הגבולות של האלמנט השני
+
+    return !( // מחזיר אמת אם האלמנטים חופפים, אחרת שקר
+        domRect1.top > domRect2.bottom || // אם החלק העליון של האלמנט הראשון נמוך מהחלק התחתון של האלמנט השני
+        domRect1.right < domRect2.left || // אם החלק הימני של האלמנט הראשון שמאלה מהחלק השמאלי של האלמנט השני
+        domRect1.bottom < domRect2.top || // אם החלק התחתון של האלמנט הראשון גבוה מהחלק העליון של האלמנט השני
+        domRect1.left > domRect2.right // אם החלק השמאלי של האלמנט הראשון ימינה מהחלק הימני של האלמנט השני
+    )
+    }
+}
+
+
+
+
+    </script>
+</body>
+</html>
