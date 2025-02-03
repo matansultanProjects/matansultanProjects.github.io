@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉 Wordle - יום הולדת 🎂</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: #fff;
+            padding: 20px;
+            overflow: hidden;
+            animation: backgroundAnimation 5s infinite;
+        }
+
+        /* אנימציה לרקע */
+        @keyframes backgroundAnimation {
+            0% { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
+            50% { background: linear-gradient(45deg, #ff4081, #f48fb1); }
+            100% { background: linear-gradient(45deg, #ff9a9e, #fad0c4); }
+        }
+
+        h1 {
+            font-size: 3em;
+            text-shadow: 2px 2px 5px #ff4081;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        /* אנימציה לכותרת */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        #wordDisplay {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px;
+            animation: slideIn 1s ease-out;
+        }
+
+        /* אנימציה להצגת המילים */
+        @keyframes slideIn {
+            0% { transform: translateY(-100px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .letterBox {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            color: #000;
+            font-size: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .letterBox.correct {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .letterBox.present {
+            background: #FFEB3B;
+            color: white;
+        }
+
+        .letterBox.absent {
+            background: #F44336;
+            color: white;
+        }
+
+        #inputDiv {
+            margin-top: 20px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 10px;
+            font-size: 1.2em;
+            border: none;
+            background: #ff4081;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #d81b60;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: yellow;
+        }
+
+        #hint {
+            display: none;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: yellow;
+            font-weight: bold;
+        }
+
+        #hintButton {
+            font-size: 1.5em;
+            background: #ff4081;
+        }
+
+        #buttonsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+            animation: fadeIn 3s ease-in-out;
+        }
+
+        .letterButton {
+            margin: 5px;
+            padding: 15px;
+            font-size: 1.5em;
+            border: none;
+            background: #ff4081;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .letterButton:hover {
+            background: #d81b60;
+            transform: scale(1.1);
+        }
+
+        /* מסך סיום */
+        #endGameMessage {
+            display: none;
+            animation: endGameAnimation 2s ease-out;
+        }
+
+        @keyframes endGameAnimation {
+            0% { opacity: 0; transform: scale(0.5); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        #endGameMessage h2 {
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 2px 2px 5px #ff4081;
+        }
+
+        #endGameMessage ul {
+            list-style-type: none;
+            padding: 0;
+            font-size: 1.2em;
+            color: #fff;
+        }
+
+        #endGameMessage li {
+            margin: 10px 0;
+        }
+
+        /* עיצוב רספונסיבי */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            #wordDisplay {
+                grid-template-columns: repeat(5, 40px);
+                gap: 8px;
+            }
+            .letterBox {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5em;
+            }
+            .letterButton {
+                font-size: 1.2em;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🎉 Wordle - יום הולדת 🎂</h1>
+
+    <div id="topicDisplay"></div>
+    <div id="wordDisplay"></div>
+    <div id="message"></div>
+    <div id="hintButtonContainer">
+        <button id="hintButton" onclick="showHint()">🎈 רמז 🎈</button>
+    </div>
+    <p id="hint"></p>
+    <div id="buttonsContainer"></div>
+
+    <div id="endGameMessage">
+        <h2>🎉 מזל טוב! סיימת את המשחק! 🎉</h2>
+        <p>רחלי, תארגני תיק לצימר:</p>
+        <ul>
+            <li>בגדים יפים</li>
+            <li>בגד ים</li>
+            <li>המון מצב רוח ואהבההה 💖</li>
+        </ul>
+    </div>
+
+    <script>
+        const words = ["צימר", "מעלהגמלא"];  // המילים של שני השלבים (ללא רווח בשלב השני)
+        const hints = [
+            ["חדר חמים", "מתאים להתפנק", "נמצא בצפון"], // רמזים לשלב 1
+            ["צפון הארץ", "הר גבוה", "נוף עוצר נשימה"]  // רמזים לשלב 2
+        ];
+        let currentWordIndex = 0;  // מצביע לאיזה שלב אנחנו
+        let word = words[currentWordIndex];
+        let guessedWord = Array(word.length).fill('_');
+        let attempts = 6;  // מספר הנסיונות
+        let maxHints = 3;  // מגבלת רמזים
+        let hintCount = 0;  // מספר הרמזים שניתנים
+
+        // הצגת הנושא
+        function displayTopic() {
+            let topicMessage = currentWordIndex === 0 ? "נושא: מקום לטיול נעים ומרגיע" : "נושא: מקום בצפון עם נוף מרהיב";
+            document.getElementById("topicDisplay").innerText = topicMessage;
+        }
+
+        // הצגת לוח המילים
+        function displayWord() {
+            const wordDiv = document.getElementById("wordDisplay");
+            wordDiv.innerHTML = '';
+            guessedWord.forEach((letter, index) => {
+                let letterBox = document.createElement("div");
+                letterBox.classList.add("letterBox");
+                letterBox.innerText = letter;
+                wordDiv.appendChild(letterBox);
+            });
+        }
+
+        // הצגת כפתורים לכל אות
+        function createLetterButtons() {
+            const buttonsContainer = document.getElementById("buttonsContainer");
+            buttonsContainer.innerHTML = '';
+            const alphabet = "אבגדהוזחטיכלמנסעפצקרשת".split('');
+            alphabet.forEach(letter => {
+                let letterButton = document.createElement("button");
+                letterButton.classList.add("letterButton");
+                letterButton.innerText = letter;
+                letterButton.onclick = () => makeGuess(letter);
+                buttonsContainer.appendChild(letterButton);
+            });
+        }
+
+        // פעולה לביצוע ניחוש
+        function makeGuess(letter) {
+            let correctGuess = false;
+            for (let i = 0; i < word.length; i++) {
+                if (word[i] === letter) {
+                    guessedWord[i] = letter;
+                    correctGuess = true;
+                }
+            }
+
+            // עדכון צבעים
+            updateColors(letter, correctGuess);
+            displayWord();
+
+            // אם המילה נחשפה
+            if (!guessedWord.includes('_')) {
+                if (currentWordIndex === 0) {
+                    setTimeout(() => {
+                        alert("🎉 ניחשתם נכון! עברו לשלב הבא 🎉");
+                        currentWordIndex++;
+                        word = words[currentWordIndex];
+                        guessedWord = Array(word.length).fill('_');
+                        displayTopic();
+                        displayWord();
+                    }, 1000);
+                } else {
+                    showEndGame();
+                }
+            }
+        }
+
+        // עדכון צבעים לאחר ניחוש
+        function updateColors(letter, correct) {
+            const letterBoxes = document.getElementsByClassName("letterBox");
+            for (let i = 0; i < word.length; i++) {
+                if (letter === word[i]) {
+                    letterBoxes[i].classList.add("correct");
+                } else {
+                    letterBoxes[i].classList.add("absent");
+                }
+            }
+        }
+
+        // הצגת רמז
+        function showHint() {
+            if (hintCount < maxHints) {
+                document.getElementById("hint").innerText = hints[currentWordIndex][hintCount];
+                hintCount++;
+            }
+        }
+
+        // סיום המשחק
+        function showEndGame() {
+            document.getElementById("wordDisplay").style.display = "none";
+            document.getElementById("buttonsContainer").style.display = "none";
+            document.getElementById("hintButtonContainer").style.display = "none";
+            const endMessage = document.getElementById("endGameMessage");
+            endMessage.style.display = "block";
+        }
+
+        // אתחול המשחק
+        function startGame() {
+            displayTopic();
+            displayWord();
+            createLetterButtons();
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
